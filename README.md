@@ -17,3 +17,8 @@
 - AuthenticationManager delegates to one or more AuthenticationProvider
 - AuthenticationProvider uses the UserDetailsService to get the username, and PasswordEncoder to check the password.
 - We have overridden the UserDetailsService and PasswordEncoder Bean and hence our implementation will be called rather than the default one.
+
+## Better understanding of spring security flow
+- Request -> Filter chain -> delegates to -> AuthenticationManager -> delegates to -> AuthenticationProvider -> UserDetailService & PasswordEncoder
+- AuthenticationManager chooses one of the appropriate AuthenticationProvider and looks if the username exist or not. If it does, it will populate the UserDetails object, and validate the password using the provided PasswordEncoder
+- After all the filter chains have been executed, the result will go to the dispatcher servlet--part of Spring MVC and then our controller will be executed--part of Spring web.
