@@ -22,3 +22,6 @@
 - Request -> Filter chain -> delegates to -> AuthenticationManager -> delegates to -> AuthenticationProvider -> UserDetailService & PasswordEncoder
 - AuthenticationManager chooses one of the appropriate AuthenticationProvider and looks if the username exist or not. If it does, it will populate the UserDetails object, and validate the password using the provided PasswordEncoder
 - After all the filter chains have been executed, the result will go to the dispatcher servlet--part of Spring MVC and then our controller will be executed--part of Spring web.
+
+## Lesson 2: Managing User
+We want to get our user details from database.
