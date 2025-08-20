@@ -24,4 +24,24 @@
 - After all the filter chains have been executed, the result will go to the dispatcher servlet--part of Spring MVC and then our controller will be executed--part of Spring web.
 
 ## Lesson 2: Managing User
-We want to get our user details from database.
+We want to get our user details from database. To do so, in the database side, we have done the following:
+- Created a schema with name "ss_lesson2"
+- Created table "users" with "id" as primary key, "username", and "password" stored as pain text, for now
+
+To make this work, we need 
+- SecurityProvider to use our own custom implementation of `UserDetailsService`. For this, we have used `JpaUserDetailsService` which implements the `UserDetailsService` and its method `loadUserByUsername()` is provided body.
+- Now this `loadUserByUsername()` gives us `username`. And we want to fetch the details from database using this `username`.
+- To make the necessary configuration, we created an Entity class-- `User`
+- To query from database we have created a repository interface which implements `JpaRepository<User, Integer>` and we provide our method in it.
+
+> Notice that we don't require a @Repository annotation above our repository as we don't want to it to create a bean, as it cannot do so, since it is an interface and interface can't have object.
+
+- By now, our database connection configuration is made, and we want our custom implementation of UserDetailsService to use this connection to fetch user details from database.
+- In the `loadUserByUsername()` method, we call the `UserRepository` method, passing in the username. It returns an `Optional<User>` as the user may not belong in the database.
+- By now, you will notice that `loadUserByUsername()` returns a UserDetails class, which contains all the necessary methods that spring security needs for a user.
+- But we only have User class.
+- We use the decorator patter, and create a new class `SecurityUser` of type `userDetails` which uses our `User` class to add some more capabilities to it, keeping both the classes separate but still working together as a wrapper.
+- We then return this from our `loadUserByUsername()` method.
+
+> We can remove the Bean of UserDetailsService from WebSecurityConfig and directly put @Service annotation over JpaUserDetailsService. This way, we don't need to pass in UserRepository as an argument to its constructor explicitly.
+
