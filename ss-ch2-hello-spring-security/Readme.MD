@@ -10,5 +10,21 @@ When using the default UserDetailsService, a PasswordEncoder is also autoconfigu
 
 > The NoOpPasswordEncoder instance treats passwords as plain text. It doesn’t encrypt or hash them. For matching, NoOpPasswordEncoder only compares the strings using the underlying equals(Object o) method of the String class. You shouldn’t use this type of PasswordEncoder in a production-ready app. NoOpPasswordEncoder is a good option for examples where you don’t want to focus on the hashing algorithm of the password. Therefore, the developers of the class marked it as @Deprecated, and your development environment will show its name with a strikethrough.
 
-## WebSecurityConfigureAdapter
-HTTP Basic authentication doesn’t fit into most application architectures. Sometimes we’d like to change it to match our application. Similarly, not all endpoints of an application need to be secured, and for those that do, we might need to choose different authorization rules. To make such changes, we start by extending the WebSecurityConfigurerAdapter class. Extending this class allows us to override the configure(HttpSecurity http) method
+## SecurityFilterChain
+HTTP Basic authentication doesn’t fit into most application architectures. Sometimes, we’d like to change it to match our application. Similarly, not all endpoints of an application need to be secured, and for those that do, we might need to choose different authentication methods and authorization rules. To customize the handling of authentication and authorization, we’ll need to define a bean of type SecurityFilterChain.
+
+```java
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http.httpBasic(Customizer.withDefaults());
+    http.authorizeHttpRequests(
+            c -> c.anyRequest().authenticated() // authenticate all requests (default behaviour of application)
+            // c -> c.anyRequest().permitAll() --> pass requests without authenticating
+    );
+
+    return http.build();
+}
+```
+httpBasic(), which helped us configure the authentication approach. By calling this method, you instructed your app to accept HTTP Basic as an authentication method.
+
+authorizeHttpRequests(), which helped us configure the authorization rules at the endpoint level. By calling this method, you instructed the app on how to authorize the requests received on specific endpoints.
